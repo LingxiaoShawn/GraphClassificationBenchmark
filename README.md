@@ -1,0 +1,2 @@
+# GraphClassificationBenchmark
+Benchmarking graph classification datasets
