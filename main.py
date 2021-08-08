@@ -7,11 +7,12 @@ from train_eval import cross_validation_with_val_set
 
 from gcn import GCN, GCNWithJK
 from gin import GIN0, GIN0WithJK, GIN, GINWithJK
+from gpca import GPCANet
 from chebnet import ChebNet
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=200) # 300 previously
-parser.add_argument('--batch_size', type=int, default=16)
+parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--lr_decay_factor', type=float, default=0.85)
 parser.add_argument('--lr_decay_step_size', type=int, default=50)
@@ -26,7 +27,9 @@ layers = [2, 3] #, #5 7]
 hiddens = [32, 64]#, 128]
 # layers = [2]
 # hiddens = [128]
-datasets = ['congress-sim3','mig-sim3']#['COLLAB', 'REDDIT-MULTI-5K'] #'AIDS', 'DD', 'PROTEINS',  'IMDB-BINARY', 'IMDB-MULTI', 'REDDIT-BINARY','congress-LS', 
+# datasets = ['congress-sim3','mig-sim3']#['COLLAB', 'REDDIT-MULTI-5K'] #'AIDS', 'DD', 'PROTEINS',  'IMDB-BINARY', 'IMDB-MULTI', 'REDDIT-BINARY','congress-LS', 
+
+datasets = ['DD', 'PROTEINS',  'IMDB-BINARY', 'REDDIT-BINARY']
 
 def logger(info):
     fold, epoch = info['fold'] + 1, info['epoch']
@@ -44,8 +47,8 @@ for dataset_name in datasets:
     # Reset logging: Remove all handlers associated with the root logger object.
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
-    logging.basicConfig(format='%(message)s', level=logging.INFO, filename=f'logs/{dataset_name}-{Net.__name__}-K{args.chebK}.log')
-    # logging.basicConfig(format='%(message)s', level=logging.DEBUG)
+    # logging.basicConfig(format='%(message)s', level=logging.INFO, filename=f'logs/{dataset_name}-{Net.__name__}-K{args.chebK}.log')
+    logging.basicConfig(format='%(message)s', level=logging.DEBUG)
 
     best_result = (float('inf'), 0, 0)  # (loss, acc, std)
     for num_layers, hidden in product(layers, hiddens):
