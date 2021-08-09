@@ -10,6 +10,9 @@ from gin import GIN0, GIN0WithJK, GIN, GINWithJK
 from gpca import GPCANet
 from chebnet import ChebNet
 
+import torch 
+torch.set_num_threads(24)
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=200) # 300 previously
 parser.add_argument('--batch_size', type=int, default=128)

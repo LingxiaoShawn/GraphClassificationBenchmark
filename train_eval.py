@@ -31,7 +31,7 @@ def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
         model.to(device).reset_parameters()
 
         if hasattr(model, 'init'):
-            model.init(dataset.data.cuda())
+            model.init(dataset.data.to(device))
             dataset.data.to('cpu')
 
         optimizer = Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
