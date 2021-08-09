@@ -17,14 +17,16 @@ parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--lr_decay_factor', type=float, default=0.85)
 parser.add_argument('--lr_decay_step_size', type=int, default=50)
 parser.add_argument('--chebK', type=int, default=1)
+parser.add_argument('--alpha', type=float, default=1)
 parser.add_argument('--gpu', type=int, default=0)
 parser.add_argument('--net', type=str, default='GCN')
 args = parser.parse_args()
 
 Net = eval(args.net)
 
-layers = [2, 3] #, #5 7]
-hiddens = [32, 64]#, 128]
+alphas = [0.1, 1, 10, 20, 50] # used in outer part
+layers = [2, 3, 5, 7]
+hiddens = [32, 64, 128]
 # layers = [2]
 # hiddens = [128]
 # datasets = ['congress-sim3','mig-sim3']#['COLLAB', 'REDDIT-MULTI-5K'] #'AIDS', 'DD', 'PROTEINS',  'IMDB-BINARY', 'IMDB-MULTI', 'REDDIT-BINARY','congress-LS', 
@@ -47,15 +49,17 @@ for dataset_name in datasets:
     # Reset logging: Remove all handlers associated with the root logger object.
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
-    # logging.basicConfig(format='%(message)s', level=logging.INFO, filename=f'logs/{dataset_name}-{Net.__name__}-K{args.chebK}.log')
-    logging.basicConfig(format='%(message)s', level=logging.DEBUG)
+    logging.basicConfig(format='%(message)s', level=logging.INFO, filename=f'logs/{dataset_name}-{Net.__name__}-K{args.chebK}-alpha{args.alpha}.log')
+    # logging.basicConfig(format='%(message)s', level=logging.DEBUG)
 
     best_result = (float('inf'), 0, 0)  # (loss, acc, std)
     for num_layers, hidden in product(layers, hiddens):
         logging.info('-'*50)
         logging.info(f'!L[{num_layers}] H[{hidden}]')
         dataset = get_dataset(dataset_name)
-        model = Net(dataset, num_layers, hidden, K=args.chebK)
+
+        model = Net(dataset, num_layers, hidden, K=args.chebK, alpha=args.alpha)
+        
         loss, acc, std = cross_validation_with_val_set(
             dataset,
             model,

@@ -29,6 +29,11 @@ def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
         test_loader = DataLoader(test_dataset, batch_size, shuffle=False, num_workers=NUM_WORKERS)
 
         model.to(device).reset_parameters()
+
+        if hasattr(model, 'init'):
+            model.init(dataset.data.cuda())
+            dataset.data.to('cpu')
+
         optimizer = Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
 
         # if torch.cuda.is_available():
@@ -46,7 +51,7 @@ def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
                 'epoch': epoch,
                 'train_loss': train_loss,
                 # 'val_loss': val_losses[-1],
-                'test_acc': accs[-1],
+                'test_acc': max(accs), #accs[-1],
             }
             
 

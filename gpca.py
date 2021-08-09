@@ -102,9 +102,9 @@ class GPCALayer(nn.Module):
             self.weight.data = weight
 
 class GPCANet(nn.Module):
-    def __init__(self, dataset, num_layers, hidden, alpha=1,
-                 dropout=0, n_powers=10, center=True, act='ReLU', 
-                 mode='DA', out_nlayer=1, **kwargs):
+    def __init__(self, dataset, num_layers, hidden, alpha=10,
+                 dropout=0.5, n_powers=5, center=True, act='ReLU', 
+                 mode='DA', out_nlayer=2, **kwargs):
         super().__init__()
         nclass = dataset.num_classes
         nfeat = dataset.num_features
@@ -157,10 +157,10 @@ class GPCANet(nn.Module):
             x = conv(data)
             if not self.freeze_status:
                 x = self.relu(x)
-                x = self.dropout(x)
             data.x = x
+
         x = global_mean_pool(x, data.batch)    
-        out = self.out_mlp(self.dropout(x))
+        out = self.out_mlp(x)
         data.x = original_x # restore 
         return F.log_softmax(out, dim=-1)
         
