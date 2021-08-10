@@ -28,13 +28,18 @@ args = parser.parse_args()
 Net = eval(args.net)
 
 alphas = [0.1, 1, 10, 20, 50] # used in outer part
-layers = [2, 3, 5, 7]
-hiddens = [32, 64, 128]
+# layers = [2, 3, 5, 7]
+# hiddens = [32, 64, 128]
+
+layers = [3, 5, 7]
+hiddens = [128]
+
 # layers = [2]
 # hiddens = [128]
 # datasets = ['congress-sim3','mig-sim3']#['COLLAB', 'REDDIT-MULTI-5K'] #'AIDS', 'DD', 'PROTEINS',  'IMDB-BINARY', 'IMDB-MULTI', 'REDDIT-BINARY','congress-LS', 
 
-datasets = ['DD', 'PROTEINS',  'IMDB-BINARY', 'REDDIT-BINARY']
+# datasets = ['DD', 'PROTEINS',  'IMDB-BINARY', 'REDDIT-BINARY']
+datasets = ['AIDS']#, 'IMDB-BINARY', 'REDDIT-BINARY']
 
 def logger(info):
     fold, epoch = info['fold'] + 1, info['epoch']
